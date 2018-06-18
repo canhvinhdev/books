@@ -17,12 +17,12 @@ class Order extends Model
      */
     protected $table = 'orders';
 
-    
-    public static function listOrders()
+    public static function listOrder()
     {
-        $data = Order::join('products', 'products.id', '=', 'orders.product_id')
-            ->select('products.name', 'orders.quantity', 'orders.price')
+        $data = Order::join('users', 'users.id', '=', 'orders.user_id')
+            ->select('users.id as user_id','orders.code', 'users.name', 'orders.price_all', 'orders.status','orders.created_at','orders.id')
             ->get();
         return $data;
     }
+    
 }

@@ -21,14 +21,14 @@ class OrderController extends Controller
     }
     public function index()
     {
-        $order = OrderDetail::listOrder();
+        $order = Order::listOrder();
         return view('admin.order.list', compact('order'));
     }
 
     public function store(Request $request)
     {
         if($request->has('id') && $request->id != "") {
-            $order = OrderDetail::find($request->id);
+            $order = Order::find($request->id);
              Session::flash('message_table', 'Sửa bảng thành công !');
         }
         $order->status = $request->status;
@@ -38,15 +38,15 @@ class OrderController extends Controller
 
     public function edit($id)
     {
-        $order = OrderDetail::find($id);
-        $product =Order::listOrders();
+        $order = Order::find($id);
+        $product =OrderDetail::listOrders();
         $user = User::find( $order->user_id);
         return view('admin.order.edit', compact('order','product','user'));
     }
 
     public function customer($id)
     {
-        $order = OrderDetail::where('user_id','=',$id)->get();
+        $order = Order::where('user_id','=',$id)->get();
         $user = User::find($id);
         return view('admin.order.customer', compact('order','user'));
     }
@@ -54,7 +54,7 @@ class OrderController extends Controller
     public function delete($id)
     {
         try{
-            $order = OrderDetail::find($id);
+            $order = Order::find($id);
             $order->delete();      
         }catch(\Exception $e){
             Session::flash('message', 'Phải xóa các bảng chứa khóa ngoại trước !');

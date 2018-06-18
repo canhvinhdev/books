@@ -35,36 +35,36 @@ class OrdersController extends Controller
         
         $total = 0;
         foreach ($content as $data){
-            $order=new Order();
+            $orderDetail=new OrderDetail();
             //$order->code = $code;
-            $order->product_id = $data['id'];
-            $order->quantity = $data['qty'];
-            $order->price = $data['price'];
+            $orderDetail->product_id = $data['id'];
+            $orderDetail->quantity = $data['qty'];
+            $orderDetail->price = $data['price'];
             $total =  $total+ $data['price'] * $data['qty'];
-            $order->save();
+            $orderDetail->save();
         }
-        $code = OrderDetail::orderBy('code', 'desc')->first();
+        $code = Order::orderBy('code', 'desc')->first();
         if(isset($code)){
             $code = $this->code($code->code);
         }else{
             $code = "0000001";
         }
-        $order = Order::orderBy('id', 'desc')->first();
-        $orderDetail = new OrderDetail();
-        $orderDetail->order_id = $order->id;
-        $orderDetail->code = $code;
-        $orderDetail->user_id = $users->id;
-        $orderDetail->price_all = $total;
-        $orderDetail->method =  $request->method;
-        $orderDetail->status = 0;
-        $orderDetail->save();
+        $orderDetail = OrderDetail::orderBy('id', 'desc')->first();
+        $order = new Order();
+        $order->order_details_id = $orderDetail->id;
+        $order->code = $code;
+        $order->user_id = $users->id;
+        $order->price_all = $total;
+        $order->method =  $request->method;
+        $order->status = 0;
+        $order->save();
         Cart::destroy();
         return redirect()->route('customer', ['id' =>  $users->id]);
     }
 
     public function customer(Request $request){
         $user = User::find($request->id);
-        $order = OrderDetail::where('user_id','=',$request->id)->get();
+        $order = Order::where('user_id','=',$request->id)->get();
         return view('app.customer', compact('user','order'));
     }
     public function editCustomer(Request $request){
