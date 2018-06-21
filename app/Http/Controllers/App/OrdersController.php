@@ -25,46 +25,40 @@ class OrdersController extends Controller
     }
     public function postCheckOut(Request $request){
         $content= Cart::content()->toArray();
-        
         $email = User::where('email','=',$request->email)->first();
         $users = Auth::user();
-        $user = User::find($users->id);
-        $user->fill($request->all());
-       // $user->password = bcrypt($user->password);
-        $user->save();
-        
         $total = 0;
         foreach ($content as $data){
-            $orderDetail=new OrderDetail();
+            $order=new Order();
             //$order->code = $code;
-            $orderDetail->product_id = $data['id'];
-            $orderDetail->quantity = $data['qty'];
-            $orderDetail->price = $data['price'];
+            $order->product_id = $data['id'];
+            $order->quantity = $data['qty'];
+            $order->price = $data['price'];
             $total =  $total+ $data['price'] * $data['qty'];
-            $orderDetail->save();
+            $order->save();
         }
-        $code = Order::orderBy('code', 'desc')->first();
+        $code = OrderDetail::orderBy('code', 'desc')->first();
         if(isset($code)){
             $code = $this->code($code->code);
         }else{
             $code = "0000001";
         }
-        $orderDetail = OrderDetail::orderBy('id', 'desc')->first();
-        $order = new Order();
-        $order->order_details_id = $orderDetail->id;
-        $order->code = $code;
-        $order->user_id = $users->id;
-        $order->price_all = $total;
-        $order->method =  $request->method;
-        $order->status = 0;
-        $order->save();
+        $order = Order::orderBy('id', 'desc')->first();
+        $orderDetail = new OrderDetail();
+        $orderDetail->order_id = $order->id;
+        $orderDetail->code = $code;
+        $orderDetail->user_id = $users->id;
+        $orderDetail->price_all = $total;
+        $orderDetail->method =  $request->method;
+        $orderDetail->status = 0;
+        $orderDetail->save();
         Cart::destroy();
         return redirect()->route('customer', ['id' =>  $users->id]);
     }
 
     public function customer(Request $request){
         $user = User::find($request->id);
-        $order = Order::where('user_id','=',$request->id)->get();
+        $order = OrderDetail::where('user_id','=',$request->id)->get();
         return view('app.customer', compact('user','order'));
     }
     public function editCustomer(Request $request){
@@ -80,7 +74,6 @@ class OrdersController extends Controller
             }
         }
         $user->fill($request->all());
-        $user->role_id = 2;
         $user->status = 1;
         $user->save(); 
         return redirect()->route('index');

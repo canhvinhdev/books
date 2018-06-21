@@ -38,8 +38,6 @@ class UserController extends Controller
             $user->name =  $request->name;
             $user->password = bcrypt($request->password);
             $user->save();
-
-
             return redirect()->route('login-app');
         }
 
