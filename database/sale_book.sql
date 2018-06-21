@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th6 18, 2018 lúc 02:25 AM
+-- Thời gian đã tạo: Th6 21, 2018 lúc 02:31 AM
 -- Phiên bản máy phục vụ: 10.1.31-MariaDB
 -- Phiên bản PHP: 7.1.16
 
@@ -30,7 +30,6 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -43,12 +42,12 @@ CREATE TABLE `categories` (
 -- Đang đổ dữ liệu cho bảng `categories`
 --
 
-INSERT INTO `categories` (`id`, `user_id`, `name`, `description`, `created_at`, `updated_at`, `parent_id`, `status`) VALUES
-(9, 2, 'Sách kinh tế', 'Mô tả về các loại sách kinh tế', '2018-06-17 08:59:54', '2018-06-17 08:59:54', 0, 1),
-(10, 2, 'Sách giáo dục', 'Mô tả về các loại sách giáo dục', '2018-06-17 09:00:19', '2018-06-17 09:00:19', 0, 1),
-(11, 2, 'Sách văn hóa xã hội', 'Mô tả về các loại sách văn hóa xã hội', '2018-06-17 09:00:49', '2018-06-17 09:00:49', 0, 1),
-(12, 2, 'Sách tiếng Anh', 'Mô tả về Sách tiếng Anh', '2018-06-17 09:02:08', '2018-06-17 09:02:08', 0, 1),
-(13, 2, 'Sách lịch sử', 'Mô tả về Sách lịch sử', '2018-06-17 09:53:24', '2018-06-17 09:53:24', 0, 1);
+INSERT INTO `categories` (`id`, `name`, `description`, `created_at`, `updated_at`, `parent_id`, `status`) VALUES
+(9, 'Sách kinh tế', 'Mô tả về các loại sách kinh tế', '2018-06-17 08:59:54', '2018-06-17 08:59:54', 0, 1),
+(10, 'Sách giáo dục', 'Mô tả về các loại sách giáo dục', '2018-06-17 09:00:19', '2018-06-17 09:00:19', 0, 1),
+(11, 'Sách văn hóa xã hội', 'Mô tả về các loại sách văn hóa xã hội', '2018-06-17 09:00:49', '2018-06-17 09:00:49', 0, 1),
+(12, 'Sách tiếng Anh', 'Mô tả về Sách tiếng Anh', '2018-06-17 09:02:08', '2018-06-17 09:02:08', 0, 1),
+(13, 'Sách lịch sử', 'Mô tả về Sách lịch sử', '2018-06-17 09:53:24', '2018-06-17 09:53:24', 0, 1);
 
 -- --------------------------------------------------------
 
@@ -125,7 +124,8 @@ CREATE TABLE `orders` (
 
 INSERT INTO `orders` (`id`, `product_id`, `quantity`, `price`, `created_at`, `updated_at`) VALUES
 (3, 15, 1, 300000, '2018-06-17 16:50:49', '2018-06-17 16:50:49'),
-(4, 15, 1, 300000, '2018-06-17 17:01:11', '2018-06-17 17:01:11');
+(4, 15, 1, 300000, '2018-06-17 17:01:11', '2018-06-17 17:01:11'),
+(5, 16, 1, 450000, '2018-06-20 16:06:53', '2018-06-20 16:06:53');
 
 -- --------------------------------------------------------
 
@@ -150,7 +150,8 @@ CREATE TABLE `order_details` (
 --
 
 INSERT INTO `order_details` (`id`, `user_id`, `code`, `order_id`, `price_all`, `method`, `status`, `created_at`, `updated_at`) VALUES
-(7, 6, '0000002', 4, 300000, 0, 0, '2018-06-17 17:01:11', '2018-06-17 17:01:11');
+(7, 6, '0000002', 4, 300000, 0, 0, '2018-06-17 17:01:11', '2018-06-17 17:01:11'),
+(8, 2, '0000003', 5, 450000, 0, 0, '2018-06-20 16:06:53', '2018-06-20 16:06:53');
 
 -- --------------------------------------------------------
 
@@ -193,16 +194,15 @@ CREATE TABLE `promotion` (
   `name` varchar(255) NOT NULL,
   `start_day` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `end_day` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `status` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL
+  `status` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Đang đổ dữ liệu cho bảng `promotion`
 --
 
-INSERT INTO `promotion` (`id`, `name`, `start_day`, `end_day`, `status`, `user_id`) VALUES
-(1, 'khuyen mai thang 6', '2018-06-18 17:00:00', '2018-06-29 17:00:00', 1, 2);
+INSERT INTO `promotion` (`id`, `name`, `start_day`, `end_day`, `status`) VALUES
+(1, 'khuyen mai thang 6', '2018-06-18 17:00:00', '2018-06-29 17:00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -296,7 +296,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `role_id`, `email`, `phone`, `address`, `password`, `remember_token`, `created_at`, `updated_at`, `username`, `_token`, `status`) VALUES
-(2, 'admin', 1, 'admin@gmail.com', '1642155930', 'hanoi', '$2y$10$DbHDrI2uGUTr5gqiVQSk3./C207UptRkTZmX6ody4TiLngpriFzcq', 'qiK1gxsCmWAcEl8KRyVlrKRxErhKagTh4dgZpOwNjct33aUqKgFKdN7fIrhk', '2018-05-18 23:42:40', '2018-06-17 16:45:46', 'admin', NULL, 1),
+(2, 'admin', 1, 'admin@gmail.com', '1642155930', 'hanoi', '$2y$10$DbHDrI2uGUTr5gqiVQSk3./C207UptRkTZmX6ody4TiLngpriFzcq', 'p01QHqobkMAlSi2rAfV7BwJgLMWMNW193y7it6JKnVSu6aepwkjyNsWcOfcB', '2018-05-18 23:42:40', '2018-06-17 16:45:46', 'admin', NULL, 1),
 (4, 'HN', 2, 'test@gmail.com', NULL, NULL, '$2y$10$3PemYt6ef7dVymTaKjZdgu7Bgl.S.0OXQlcWciuMWgirdIkg5MaY.', NULL, '2018-06-17 10:21:43', '2018-06-17 10:21:43', 'test', NULL, NULL),
 (5, 'Test', 2, 'laptrinhvientest@gmail.com', '0986677766', 'Hà Nội 2', '$2y$10$DbHDrI2uGUTr5gqiVQSk3./C207UptRkTZmX6ody4TiLngpriFzcq', 'zvhLGNLrFxymdrLgJONjxd520Je10Mm7hSBCdI32iuHo7CiZYsSPLJReyqUZ', '2018-06-17 10:27:23', '2018-06-17 12:16:07', 'Test', NULL, 1),
 (6, 'test', 2, 'user@gmail.com', '984009503', '12/15/dong da ha noi', '$2y$10$5.m8hTJ10yzPGwaPVorrbO2ZKEQ.vO3aNDVDIasZBb5obs8Ow90QC', 'G8V0iuoVx7ftFVT0w3v1cUsGqqpt8xewvI4rZ3CaBZta2Fy8Fk23L5EyD6Cx', '2018-06-17 16:58:21', '2018-06-17 17:01:11', 'test', NULL, NULL);
@@ -387,7 +387,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT cho bảng `comments`
@@ -405,13 +405,13 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `order_details`
 --
 ALTER TABLE `order_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `products`
@@ -435,7 +435,7 @@ ALTER TABLE `promotion_product`
 -- AUTO_INCREMENT cho bảng `role`
 --
 ALTER TABLE `role`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `slide`

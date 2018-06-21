@@ -24,10 +24,10 @@ class OrderDetail extends Model
      */
     protected $fillable = [
     ];
-    public static function listOrder()
+    public static function listOrders()
     {
-        $data = OrderDetail::join('users', 'users.id', '=', 'order_details.user_id')
-            ->select('users.id as user_id','order_details.code', 'users.name', 'order_details.price_all', 'order_details.status','order_details.created_at','order_details.id')
+        $data = OrderDetail::join('products', 'products.id', '=', 'order_details.product_id')
+            ->select('products.name', 'order_details.quantity', 'order_details.price')
             ->get();
         return $data;
     }
