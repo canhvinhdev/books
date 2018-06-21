@@ -53,8 +53,6 @@ class CategoryController extends Controller{
         $category->description = $request->description;
         $category->parent_id = $request->parent_id;
         $category->status = $request->statuses;
-        $user = Auth::user();
-        $category->user_id = $user->id;
         $category->save();
 
         return redirect()->route('admin.category.list');

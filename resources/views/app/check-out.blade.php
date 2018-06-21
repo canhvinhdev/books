@@ -138,7 +138,8 @@
             <tr>
                 <th>Tiêu đề</th>
                 <th>Số lượng </th>
-                <th class="text-center">Giá</th>
+                <th class="text-center">Giá gốc</th>
+                 <th class="text-center">Giá sau khi khuyến mại</th>
                 <th class="text-center">Tổng</th>
 
             </tr>
@@ -160,6 +161,7 @@
                     <td class="col-sm-1 col-md-2" style="text-align: center">
                         <strong>{!! $item['qty'] !!}</strong>
                     </td>
+                    <td class="col-sm-1 col-md-1 text-center"><strong>{{ number_format($item['options']['discount'],0,"",".")  }} đ</strong></td>
                     <td class="col-sm-1 col-md-2 text-center"><strong>{!! number_format($item['price'],0,",",".") !!}</strong></td>
                     <td class="col-sm-1 col-md-2 text-center"><strong>{{ number_format($item['price']*$item['qty'],0,"",".")  }} đ</strong></td>
 
@@ -169,7 +171,7 @@
 
 
                 <tr>
-
+                 <td>   </td>
                     <td>   </td>
                     <td>   </td>
                     <td><h5>Tổng tiền</h5></td>
@@ -177,7 +179,7 @@
                 </tr>
 
                 <tr>
-
+                 <td>   </td>
                     <td>   </td>
                     <td>   </td>
                     <td>

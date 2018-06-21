@@ -24,13 +24,30 @@ use Illuminate\Support\Facades\Storage;
                 @if(isset($product))
                     @foreach($product as $data)
                         @if($item->id == $data->category_id)
-
+                            <?php $total = null;?>
+                            @if(isset($discount))
+                            @foreach($discount as $item)
+                            <?php 
+                                if($item->product_id == $data->id){
+                                    $total = $item;
+                                }
+                            ?>
+                            @endforeach
+                            @endif
                                 <div class="item">
                                     <div class="card">
                                         <a href="/product/{{$data->id}}-{{str_slug($data->name)}}"><img src="{{$data->image}}" alt="{{$data->name}}" style="width:100%"></a>
+                                            @if(isset($total))
+                                                <img src="/app/images/sale.png" class="img_sale"   alt="">
+                                            @endif
                                         <div class="">
                                             <h4><a href="/product/{{$data->id}}-{{str_slug($data->name)}}">{{$data->name}}</a></h4>
-                                            <p>{!! number_format($data->price,0,",",".") !!} VNĐ</p>
+                                            @if(isset($total))
+                                                <span class="price-new">{!! number_format($data->price -($data->price * $total->number_discount/100),0,",",".") !!} VNĐ</span>
+                                                <span><s>{!! number_format($data->price,0,",",".") !!} VNĐ</s></span>
+                                            @else
+                                                <span class="price-new">{!! number_format($data->price,0,",",".") !!} VNĐ</span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

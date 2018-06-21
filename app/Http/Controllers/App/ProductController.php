@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\News;
 use App\Models\Comment;
 use App\Models\Contact;
+use App\Models\PromotionProduct;
 use Session;
 use Cart;
 
@@ -46,7 +47,10 @@ public function index()
     $product = Product::listProduct();
     $new = News::where('status','=',1)->get();
     $category = Category::where('status','=',1)->get();
-    return view('app.home', compact('product','category','new'));
+    $discount = Product::discount();
+   
+  
+    return view('app.home', compact('product','category','new','discount'));
 }
 
     public function detail($id)
@@ -55,27 +59,46 @@ public function index()
         $data = Category::find($product->category_id);
         $related_products = Product::where('id','<>',$id)->limit(6)->get();
         $comment = Comment::listComment();
-        return view('app.product-detail', compact('product','data','related_products','comment'));
+        $discount = Product::discount();
+        $product_promtion = PromotionProduct::join('promotion','promotion.id','=','promotion_product.promotion_id')
+        ->where('promotion_product.product_id','=',$id)
+        ->where('promotion.end_day','>=',date("Y-m-d",time()))
+        ->where('promotion.start_day','<=',date("Y-m-d",time()))
+        ->first();
+        return view('app.product-detail', compact('product','data','related_products','comment','discount','product_promtion'));
     }
 
     public function list($id)
     {
+        $discount = Product::discount();
         $product = Product::where('category_id','=',$id)->paginate(12);
         $data = Category::find($id);
         $category = Category::where('status','=',1)->get();
-        return view('app.list-product', compact('product','category','data'));
+        return view('app.list-product', compact('product','category','data','discount'));
     }
     public function cart(Request $request)
     {
-        $category = Category::where('status','=',1)->get();
         $product = Product::find($request->id);
-        Cart::add(array('id'=>$request->id,'name'=>$product->name,'qty'=>$request->quantity,'price'=>$product->price,'options'=> array('image'=>$product->image)));
+        $category = Category::where('status','=',1)->get();
+        $product_promtion = PromotionProduct::join('promotion','promotion.id','=','promotion_product.promotion_id')
+        ->where('promotion_product.product_id','=',$product->id)
+        ->where('promotion.end_day','>=',date("Y-m-d",time()))
+        ->where('promotion.start_day','<=',date("Y-m-d",time()))
+        ->first();
+        $price = $product->price - $product->price * $product_promtion->number_discount/100;
+        Cart::add(array('id'=>$request->id,'name'=>$product->name,'qty'=>$request->quantity,'price'=>$price,'options'=> array('image'=>$product->image,'discount'=>$product->price,)));
         return redirect()->route('catProduct');
     }
     public function getcart($id)
     {
         $product = Product::find($id);
-        Cart::add(array('id'=>$product->id,'name'=>$product->name,'qty'=>1,'price'=>$product->price,'options'=> array('image'=>$product->image)));
+        $product_promtion = PromotionProduct::join('promotion','promotion.id','=','promotion_product.promotion_id')
+        ->where('promotion_product.product_id','=',$product->id)
+        ->where('promotion.end_day','>=',date("Y-m-d",time()))
+        ->where('promotion.start_day','<=',date("Y-m-d",time()))
+        ->first();
+        $price = $product->price - $product->price * $product_promtion->number_discount/100;
+        Cart::add(array('id'=>$product->id,'name'=>$product->name,'qty'=>1,'price'=>$price,'options'=> array('image'=>$product->image,'discount'=>$product->price,)));
 
 
        //$content = Cart::content();
@@ -105,8 +128,9 @@ public function index()
     }
     public function search(Request $request)
     {
+        $discount = Product::discount();
         $search = Product::where('status','=',1)->where('name','like', '%' . $request->name . '%')->paginate(12);
-        return view('app.search', compact('search'));
+        return view('app.search', compact('search','discount'));
     }
 
 }

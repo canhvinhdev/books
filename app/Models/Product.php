@@ -34,4 +34,11 @@ class Product extends Model
         return $data;
     }
 
+    public static function discount()
+    {
+        $data = PromotionProduct::join('promotion','promotion.id','=','promotion_product.promotion_id')
+        ->where('promotion.end_day','>','Date')->get();
+        return $data;
+    }
+
 }

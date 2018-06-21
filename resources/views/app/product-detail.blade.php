@@ -60,9 +60,18 @@ use Illuminate\Support\Facades\Storage;
                {{-- <span id="pro_sku">Mã sp: SF021-1</span>--}}
 
             </div>
-            <div class="product-price label-da" id="price-preview" style="color: red; font-weight: 600; font-size: 30px"><span>{!! number_format($product->price,0,",",".") !!} VNĐ</span></div>
+            @if(isset($product_promtion))
+            <h4 class="price">Giá hiện tại:
+            <div class="product-price label-da price" id="price-preview" style="color: red; font-weight: 600; font-size: 30px"><s><span>{!! number_format($product->price,0,",",".") !!} VNĐ</span></s></div>
+            </h4>
 
-
+            <h4 class="price">Giá áp dụng khuyến mãi:
+            <div class="product-price label-da price" id="price-preview" style="color: red; font-weight: 600; font-size: 30px"><span>{!! number_format($product->price - ($product->price * $product_promtion->number_discount/100 ),0,",",".")  !!} VNĐ</span></div>
+            </h4>
+            @else
+            <div class="product-price label-da price" id="price-preview" style="color: red; font-weight: 600; font-size: 30px"><span>{!! number_format($product->price,0,",",".") !!} VNĐ</span></div>
+            <h4 class="price">Giá hiện tại: <span>{!! number_format($product->price,0,",",".") !!} VNĐ</span></h4>
+            @endif
 
             <form id="add-item-form" action="/mua-hang" method="post" class="variants clearfix">
                 {{ csrf_field() }}
@@ -204,20 +213,38 @@ use Illuminate\Support\Facades\Storage;
           
 
                 <div class="owl-carousel2 owl-carousel owl-theme">
-                    @if(isset($related_products))
-                        @foreach($related_products as $item1)
-                            <div class="item">
-
-                                <div class="card">
-                                    <a href="/product/{{$item1->id}}-{{str_slug($item1->name)}}"><img src="{!! asset($item1->image) !!}" alt="{!! $item1->name !!}" style="width:100%"></a>
-                                    <div class="">
-                                        <a href="/product/{{$item1->id}}-{{str_slug($item1->name)}}"><h4><b>{!! $item1->name !!}</b></h4></a>
-                                        <p>{!! number_format($item1->price,0,",",".") !!} VNĐ</p>
+                 @if(isset($related_products))
+                    @foreach($related_products as $data)
+                    <?php $total = null;?>
+                    @if(isset($discount))
+                    @foreach($discount as $item)
+                    <?php 
+                        if($item->product_id == $data->id){
+                            $total = $item;
+                        }
+                    ?>
+                    @endforeach
+                    @endif
+                                <div class="item">
+                                    <div class="card">
+                                        <a href="/product/{{$data->id}}-{{str_slug($data->name)}}"><img src="{{$data->image}}" alt="{{$data->name}}" style="width:100%"></a>
+                                        @if(isset($total))
+                                            <img src="/app/images/sale.png" class="img_sale"   alt="">
+                                        @endif
+                                        <div class="">
+                                            <h4><a href="/product/{{$data->id}}-{{str_slug($data->name)}}">{{$data->name}}</a></h4>
+                                            @if(isset($total))
+                                                <span class="price-new">{!! number_format($data->price -($data->price * $total->number_discount/100),0,",",".") !!} VNĐ</span>
+                                                <span><s>{!! number_format($data->price,0,",",".") !!} VNĐ</s></span>
+                                            @else
+                                                <span class="price-new">{!! number_format($data->price,0,",",".") !!} VNĐ</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
-                    @endif
+                    @endforeach
+                @endif
+
 
                     </div>
                 </div>

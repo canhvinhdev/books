@@ -57,8 +57,6 @@ class PromotionController extends Controller{
         $promotion->status = $request->statuses;
         $promotion->start_day = $request->start_day;
         $promotion->end_day = $request->end_day;
-        $user = Auth::user();
-        $promotion->user_id = $user->id;
         $promotion->save();
 
         return redirect()->route('admin.promotion.list');
